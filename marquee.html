@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    
+    <title>Создать html-документ с использованием библиотеки jquery. Язык html</title>
+    <meta name="description" content="Реализовать в документе движение бегущей строки. Предусмотреть ссылки для увеличения и уменьшения скорости движения строки, изменения содержимого строки в строке ввода и изменения цвета символов строки" />
+    
+    <style>
+        .marquee {
+            width: 640px;  /* ширина бегущей строки. */
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background: #ccc;  /* цвет фона бегущей строки. */ 
+        }
+    </style>
+    
+    <script src="jquery-3.3.1.js"></script>
+    <script src="jquery.marquee.js"></script>
+    
+    <script>
+        var SPEED_COEFF = 2;    // Коэффициент для увеличения/уменьшения скорости бегущей строки.
+        
+        var properties = {
+            duration: 5000,     // Длительность движения в миллисекундах, чем больше тем медленнее.
+            direction: 'left',  // Направление, может быть 'left' или 'right'.
+            delayBeforeStart: 0 // Задержка в миллисекундах перед началом движения.
+        };
+        
+        $(document).ready(function () {
+            var mq = $('.marquee').marquee(properties);
+            
+            // Обработчик реагирующий на клик по ссылке уменьшения скорости:
+            $("#speed_down").click(function () {
+                properties.duration *= SPEED_COEFF;  // Для уменьшения скорости увеличиваем продолжительность.
+                mq = $('.marquee').marquee('destroy').marquee(properties);  // Пересоздаем бегущую строку.
+            });
+            
+            // Обработчик реагирующий на клик по ссылке увеличения скорости:
+            $("#speed_up").click(function () {
+                properties.duration /= SPEED_COEFF;  // Для увеличения скорости уменьшаем продолжительность.
+                mq = $('.marquee').marquee('destroy').marquee(properties);  // Пересоздаем бегущую строку.
+            });
+            
+            // Обработчик реагирующий на изменение содержимого для бегущей строки:
+            $('#marquee_content').on('input', function () {
+                var newContent = $(this).val();
+                if (newContent.length > 0) {
+                    // Заново создаем бегущую строку, но уже с новым содержимым:
+                    mq.marquee('destroy')
+                    .html($(this).val())
+                    .marquee(properties);
+                }
+            });
+            
+            // Обработчик реагирующий на изменение цвета текста для бегущей строки:
+            $('#marquee_text_color').on('change', function () {
+                $('.marquee').css('color', $(this).val());
+            });
+        });
+    </script>
+</head>
+<body>
+    <div>
+        <p>Ссылки для увеличения и уменьшения скорости движения бегущей строки:</p>
+        <ol>
+            <li><a href="#" id="speed_up">увеличить скорость движения бегущей строки;</a></li>
+            <li><a href="#" id="speed_down">уменьшить скорость движения бегущей строки.</a></li>
+        </ol>
+        
+        <p>
+            <label for="marquee_content">Содержимое бегущей строки: </label>
+            <input id="marquee_content" type="text" value="Движение бегущей строки.">
+        </p>
+        
+        <p>
+            <label for="marquee_text_color">Цвет символов бегущей строки: </label>
+            <input id="marquee_text_color" type="color">
+        </p>
+    </div>
+    
+    <br/>
+    
+    <div class="marquee">Движение бегущей строки.</div>
+</body>
+</html>
